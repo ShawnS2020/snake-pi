@@ -7,12 +7,19 @@ senseHat = SenseHat()
 
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
-START_DELAY = 3
+START_DELAY = 1
 MATRIX_MIN_VALUE = 0
 MATRIX_MAX_VALUE = 7
 MATRIX_SIZE = 8
 
 while True:
+    senseHat.show_message("Snake", text_colour = GREEN)
+    senseHat.show_letter("3", GREEN)
+    time.sleep(1)
+    senseHat.show_letter("2", GREEN)
+    time.sleep(1)
+    senseHat.show_letter("1", GREEN)
+
     # variables:
     gameOverFlag = False
     growSnakeFlag = False
