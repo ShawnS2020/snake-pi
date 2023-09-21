@@ -48,7 +48,6 @@ while True:
             generateRandomFoodFlag = True
             snakeMovementDelay += snakeMovementDelayDecrease
 
-<<<<<<< HEAD
         # check if snake bites itself:
         for i in range(1, len(snakePosX)):
             if snakePosX[i] == snakePosX[0] and snakePosY[i] == snakePosY[0]:
@@ -119,5 +118,3 @@ while True:
 
         # snake speed (game loop delay):
         time.sleep(snakeMovementDelay)
-=======
->>>>>>> 62b29d8f8c82208bc354022057fa4ba254c5ab16
