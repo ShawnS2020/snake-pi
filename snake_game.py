@@ -7,6 +7,7 @@ senseHat = SenseHat()
 
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
+WHITE = (0, 0, 0)
 START_DELAY = 1
 MATRIX_MIN_VALUE = 0
 MATRIX_MAX_VALUE = 7
@@ -62,8 +63,18 @@ while True:
 
         # check if game-over:
         if gameOverFlag:
+            senseHat.show_message("Game Over", text_colour = RED)
+#             senseHat.stick.get_events()
+#             senseHat.show_message("Play again?: up/down? ")
+#             PLAY_AGAIN = input("Play again?: up/down? ")
+# 
+#             time.sleep(10)
+# 
+#             if event.direction == 'up':
+                # break
+#             else:
+#                 exit()
             break
-
         # check joystick events:
         events = senseHat.stick.get_events()
         for event in events:
@@ -79,6 +90,7 @@ while True:
             elif event.direction == "down" and movementY != -1:
                 movementY = 1
                 movementX = 0
+
 
         # grow snake:
         if growSnakeFlag:
@@ -116,7 +128,9 @@ while True:
                     if x == foodPosX and y == foodPosY:
                         retryFlag = True
                         break
-
+                        
+           
+         
         # update matrix:
         senseHat.clear()
         senseHat.set_pixel(foodPosX, foodPosY, RED)
@@ -125,3 +139,5 @@ while True:
 
         # snake speed (game loop delay):
         time.sleep(snakeMovementDelay)
+
+    
