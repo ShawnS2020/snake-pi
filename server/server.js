@@ -6,8 +6,8 @@ import { createServer } from "http";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
-const __root = dirname(__filename);
-const __public = join(__root, "/public");
+const __server = dirname(__filename);
+const __public = join(__server, "/public");
 const server = createServer(app);
 const io = new Server(server);
 
@@ -18,9 +18,9 @@ app.get("/", (req, res) => {
 });
 
 io.on('connection', (socket) => {
-	console.log('a user connected');
-	socket.on('message', (msg) => {
-		console.log('message: ' + msg);
+	console.log('a player connected');
+	socket.on('array', (msg) => {
+		console.log(msg);
 	});
 });
 
