@@ -1,9 +1,18 @@
 from sense_hat import SenseHat
 import time
 import random
+import socketio
 
 senseHat = SenseHat()
-# senseHat.low_light = True
+senseHat.clear()
+sio = socketio.Client()
+
+@sio.event
+def connect():
+    print('Player connected to the server')
+
+# Replace [ip] with your local IP address
+sio.connect('http://[ip]:3000')
 
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
@@ -14,13 +23,6 @@ MATRIX_MAX_VALUE = 7
 MATRIX_SIZE = 8
 
 while True:
-    senseHat.show_message("Snake", text_colour = GREEN)
-    senseHat.show_letter("3", GREEN)
-    time.sleep(1)
-    senseHat.show_letter("2", GREEN)
-    time.sleep(1)
-    senseHat.show_letter("1", GREEN)
-
     # variables:
     gameOverFlag = False
     growSnakeFlag = False
@@ -46,10 +48,20 @@ while True:
     movementX = 0
     movementY = -1
 
+    # Game start screen
+    senseHat.show_letter("3", GREEN)
+    time.sleep(1)
+    senseHat.show_letter("2", GREEN)
+    time.sleep(1)
+    senseHat.show_letter("1", GREEN)
+
     # -----------------------------------
     #             game loop
     # -----------------------------------
     while not gameOverFlag:
+
+        sio.emit('pixels', senseHat.get_pixels())
+
         # check if snake eats food:
         if foodPosX == snakePosX[0] and foodPosY == snakePosY[0]:
             growSnakeFlag = True
@@ -75,21 +87,39 @@ while True:
 #             else:
 #                 exit()
             break
-        # check joystick events:
-        events = senseHat.stick.get_events()
-        for event in events:
-            if event.direction == "left" and movementX != 1:
+
+        # check orientation:
+        # for some reason this needs to loop at delay of .05 to read properly
+        for i in range(0, round(snakeMovementDelay / .05)):
+            o = senseHat.get_orientation()
+            pitch = o["pitch"]
+            roll = o["roll"]
+
+            if pitch > 20 and pitch < 270 and movementX != 1:
+                movement = "left"
+                p = pitch
+                r = roll
                 movementX = -1
                 movementY = 0
-            elif event.direction == "right" and movementX != -1:
+            elif pitch < 340 and pitch > 270 and movementX != -1:
+                movement = "right"
+                p = pitch
+                r = roll
                 movementX = 1
                 movementY = 0
-            elif event.direction == "up" and movementY != 1:
+            elif roll < 340 and roll > 270 and movementY != 1:
+                movement = "up"
+                p = pitch
+                r = roll
                 movementY = -1
                 movementX = 0
-            elif event.direction == "down" and movementY != -1:
+            elif roll > 20 and roll < 270 and movementY != -1:
+                movement = "down"
+                p = pitch
+                r = roll
                 movementY = 1
                 movementX = 0
+            time.sleep(.05)
 
 
         # grow snake:
@@ -137,7 +167,6 @@ while True:
         for x, y in zip(snakePosX, snakePosY):
             senseHat.set_pixel(x, y, GREEN)
 
+        ### loop delay is now handled by the orientation loop! ###
         # snake speed (game loop delay):
-        time.sleep(snakeMovementDelay)
-
-    
+        # time.sleep(snakeMovementDelay)
