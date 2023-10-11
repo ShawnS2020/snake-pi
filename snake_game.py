@@ -1,9 +1,17 @@
 from sense_hat import SenseHat
 import time
 import random
+import socketio
 
 senseHat = SenseHat()
-# senseHat.low_light = True
+sio = socketio.Client()
+
+@sio.event
+def connect():
+    print('Player connected to the server')
+
+# Replace [ip] with your local IP address
+sio.connect('http://[ip]:3000')
 
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
@@ -49,6 +57,9 @@ while True:
     #             game loop
     # -----------------------------------
     while not gameOverFlag:
+
+        sio.emit('array', senseHat.get_pixels())
+
         # check if snake eats food:
         if foodPosX == snakePosX[0] and foodPosY == snakePosY[0]:
             growSnakeFlag = True
