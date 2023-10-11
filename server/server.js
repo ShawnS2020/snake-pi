@@ -18,9 +18,9 @@ app.get("/", (req, res) => {
 });
 
 io.on('connection', (socket) => {
-	console.log('a user connected');
-	socket.on('message', (msg) => {
-		console.log('message: ' + msg);
+	console.log('a player connected');
+	socket.on('array', (msg) => {
+		console.log(msg);
 	});
 });
 
