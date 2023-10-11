@@ -4,6 +4,7 @@ import random
 import socketio
 
 senseHat = SenseHat()
+senseHat.clear()
 sio = socketio.Client()
 
 @sio.event
@@ -21,13 +22,6 @@ MATRIX_MAX_VALUE = 7
 MATRIX_SIZE = 8
 
 while True:
-    senseHat.show_message("Snake", text_colour = GREEN)
-    senseHat.show_letter("3", GREEN)
-    time.sleep(1)
-    senseHat.show_letter("2", GREEN)
-    time.sleep(1)
-    senseHat.show_letter("1", GREEN)
-
     # variables:
     gameOverFlag = False
     growSnakeFlag = False
@@ -52,6 +46,13 @@ while True:
     # set default snake starting direction (values are chosen by preference):
     movementX = 0
     movementY = -1
+
+    # Game start screen
+    senseHat.show_letter("3", GREEN)
+    time.sleep(1)
+    senseHat.show_letter("2", GREEN)
+    time.sleep(1)
+    senseHat.show_letter("1", GREEN)
 
     # -----------------------------------
     #             game loop

@@ -9,7 +9,7 @@ senseHat.clear()
 
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
-START_DELAY = 3
+START_DELAY = 1
 MATRIX_MIN_VALUE = 0
 MATRIX_MAX_VALUE = 7
 MATRIX_SIZE = 8
@@ -42,6 +42,14 @@ while True:
     # set default snake starting direction (values are chosen by preference):
     movementX = 0
     movementY = -1
+
+    # Game start screen
+    senseHat.show_message("Snake", text_colour = GREEN)
+    senseHat.show_letter("3", GREEN)
+    time.sleep(1)
+    senseHat.show_letter("2", GREEN)
+    time.sleep(1)
+    senseHat.show_letter("1", GREEN)
 
     # -----------------------------------
     #             game loop
@@ -151,5 +159,6 @@ while True:
         for x, y in zip(snakePosX, snakePosY):
             senseHat.set_pixel(x, y, GREEN)
 
+        ### loop delay is now handled by the orientation loop! ###
         # snake speed (game loop delay):
-        time.sleep(snakeMovementDelay)
+        # time.sleep(snakeMovementDelay)
