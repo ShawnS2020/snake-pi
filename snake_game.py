@@ -58,7 +58,7 @@ while True:
     # -----------------------------------
     while not gameOverFlag:
 
-        sio.emit('array', senseHat.get_pixels())
+        sio.emit('pixels', senseHat.get_pixels())
 
         # check if snake eats food:
         if foodPosX == snakePosX[0] and foodPosY == snakePosY[0]:

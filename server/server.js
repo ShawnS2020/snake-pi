@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 
 io.on('connection', (socket) => {
 	console.log('a player connected');
-	socket.on('array', (msg) => {
+	socket.on('pixels', (msg) => {
 		console.log(msg);
 	});
 });
