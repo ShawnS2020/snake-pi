@@ -75,17 +75,6 @@ while True:
 
         # check if game-over:
         if gameOverFlag:
-            senseHat.show_message("Game Over", text_colour = RED)
-#             senseHat.stick.get_events()
-#             senseHat.show_message("Play again?: up/down? ")
-#             PLAY_AGAIN = input("Play again?: up/down? ")
-# 
-#             time.sleep(10)
-# 
-#             if event.direction == 'up':
-                # break
-#             else:
-#                 exit()
             break
 
         # check orientation:
@@ -120,7 +109,6 @@ while True:
                 movementY = 1
                 movementX = 0
             time.sleep(.05)
-
 
         # grow snake:
         if growSnakeFlag:

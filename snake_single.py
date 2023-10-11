@@ -81,6 +81,17 @@ while True:
                 data_writer.writerow(sense_data)
             sense_data = []
             score = 0
+#             senseHat.show_message("Game Over", text_colour = RED)
+#             senseHat.stick.get_events()
+#             senseHat.show_message("Play again?: up/down? ")
+#             PLAY_AGAIN = input("Play again?: up/down? ")
+# 
+#             time.sleep(10)
+# 
+#             if event.direction == 'up':
+#                 break
+#             else:
+#                 exit()
             break
 
         # check orientation:
