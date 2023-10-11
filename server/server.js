@@ -6,8 +6,8 @@ import { createServer } from "http";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
-const __root = dirname(__filename);
-const __public = join(__root, "/public");
+const __server = dirname(__filename);
+const __public = join(__server, "/public");
 const server = createServer(app);
 const io = new Server(server);
 
