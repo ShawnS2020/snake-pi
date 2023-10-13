@@ -9,11 +9,17 @@ sio = socketio.Client()
 
 @sio.event
 def connect():
+    name = input("Enter your name: ")
+    sio.emit('joinGame', name)
     print('Player connected to the server')
-    sio.emit('joinGame')
 
-# Replace [ip] with your local IP address
-sio.connect('http://[ip]:3000')
+ip = input("Enter the server's IP address: ")
+
+try:
+    sio.connect('http://' + ip + ':3000')
+except:
+    print("Could not connect to the server")
+    exit()
 
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)

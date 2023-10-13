@@ -10,8 +10,7 @@ const __server = dirname(__filename);
 const __public = join(__server, "/public");
 const server = createServer(app);
 const io = new Server(server);
-let playerCount = 0;
-let clientCount = 0;
+const playerNames = [];
 
 app.use(express.static(__public));
 
@@ -21,32 +20,26 @@ app.get("/", (req, res) => {
 
 io.on('connection', (socket) => {
 	console.log('A client connected');
-	clientCount++;
-
-	// Emit the current number of players to the front end
-	socket.emit('playerCount', playerCount);
 
 	socket.on('disconnect', () => {
 		console.log('a client disconnected');
-		clientCount--;
 
-		// If the disconnected client was a player, decrement the player count
+		// If the disconnected client was a player, update playerNames and emit the new list for the front end to update.
 		if (socket.isPlayer) {
-			playerCount--;
-			// Emit the current number of connected clients to all clients
-			io.emit('playerCount', playerCount);
+			playerNames.splice(playerNames.indexOf(socket.playerName), 1);
+			io.emit('updatePlayers', playerNames);
 		}
 	});
 
-	socket.on('joinGame', () => {
-		console.log('a player joined the game');
+	socket.on('joinGame', (playerName) => {
+		console.log(`${playerName} joined the game`);
 		socket.isPlayer = true;
-		playerCount++;
-		io.emit('playerCount', playerCount);
+		playerNames.push(playerName);
+		io.emit('updatePlayers', playerNames)
 	});
 
-	socket.on('pixels', (msg) => {
-		console.log(msg);
+	socket.on('pixels', (pixels) => {
+		// console.log(pixels);
 	});
 });
 
