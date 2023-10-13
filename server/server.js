@@ -20,6 +20,7 @@ app.get("/", (req, res) => {
 
 io.on('connection', (socket) => {
 	console.log('A client connected');
+	io.emit('updatePlayers', playerNames);
 
 	socket.on('disconnect', () => {
 		console.log('a client disconnected');
@@ -34,6 +35,7 @@ io.on('connection', (socket) => {
 	socket.on('joinGame', (playerName) => {
 		console.log(`${playerName} joined the game`);
 		socket.isPlayer = true;
+		socket.playerName = playerName;
 		playerNames.push(playerName);
 		io.emit('updatePlayers', playerNames)
 	});
