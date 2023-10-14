@@ -13,9 +13,11 @@ START_DELAY = 1
 MATRIX_MIN_VALUE = 0
 MATRIX_MAX_VALUE = 7
 MATRIX_SIZE = 8
+gameOverFlag = False
 
 def game():
     # variables:
+    global gameOverFlag
     gameOverFlag = False
     growSnakeFlag = False
     generateRandomFoodFlag = False
@@ -157,7 +159,15 @@ def connect():
 @sio.on('startGame')
 def startGame():
     print('Game started')
+    global gameOverFlag
+    gameOverFlag = False
     game()
+
+@sio.on('stopGame')
+def stopGame():
+    print('Game over')
+    global gameOverFlag
+    gameOverFlag = True
 
 ip = input("Enter the server's IP address: ")
 
