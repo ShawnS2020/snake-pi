@@ -2,20 +2,25 @@
     margin: 0;
 }
 
+body {
+    background-color: #808080;
+    display: flex;
+    flex-direction: column;
+}
+
 .container {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
+    flex-grow: 1;
     justify-content: space-around;
     align-items: center;
-    background-color: #808080;
 }
 
 .player-space {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 0px 32px;
 }
 
 .player-name {
@@ -23,8 +28,8 @@
 }
 
 .game-board {
-    width: 288px;
-    height: 288px;
+    width: 256px;
+    height: 256px;
     display: flex;
     border: solid 4px blue;
     flex-wrap: wrap;
@@ -44,4 +49,19 @@
     background-color: #303030;
     border: solid 2px #606060;
     box-sizing: border-box;
+}
+
+.buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.buttons button {
+    font-size: 24px;
+    font-family: sans-serif;
+    background-color: #000;
+    color: white;
+    border-radius: 8px;
 }

@@ -6,21 +6,6 @@ import socketio
 senseHat = SenseHat()
 senseHat.clear()
 sio = socketio.Client()
-
-@sio.event
-def connect():
-    name = input("Enter your name: ")
-    sio.emit('joinGame', name)
-    print('Player connected to the server')
-
-ip = input("Enter the server's IP address: ")
-
-try:
-    sio.connect('http://' + ip + ':3000')
-except:
-    print("Could not connect to the server")
-    exit()
-
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 WHITE = (0, 0, 0)
@@ -29,7 +14,7 @@ MATRIX_MIN_VALUE = 0
 MATRIX_MAX_VALUE = 7
 MATRIX_SIZE = 8
 
-while True:
+def game():
     # variables:
     gameOverFlag = False
     growSnakeFlag = False
@@ -153,8 +138,6 @@ while True:
                     if x == foodPosX and y == foodPosY:
                         retryFlag = True
                         break
-                        
-           
          
         # update matrix:
         senseHat.clear()
@@ -162,6 +145,22 @@ while True:
         for x, y in zip(snakePosX, snakePosY):
             senseHat.set_pixel(x, y, GREEN)
 
-        ### loop delay is now handled by the orientation loop! ###
-        # snake speed (game loop delay):
-        # time.sleep(snakeMovementDelay)
+@sio.event
+def connect():
+    name = input("Enter your name: ")
+    sio.emit('joinGame', name)
+    print('Connected to the server')
+
+@sio.on('startGame')
+def startGame():
+    print('Game started')
+    game()
+
+ip = input("Enter the server's IP address: ")
+
+try:
+    sio.connect('http://' + ip + ':3000')
+    sio.wait()
+except:
+    print("Could not connect to the server")
+    exit()

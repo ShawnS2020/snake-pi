@@ -40,6 +40,10 @@ io.on('connection', (socket) => {
 		io.emit('updatePlayers', playerNames)
 	});
 
+	socket.on('startGame', () => {
+		io.emit('startGame');
+	});
+
 	socket.on('pixels', (pixels) => {
 		// console.log(pixels);
 	});

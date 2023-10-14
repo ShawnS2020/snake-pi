@@ -1,5 +1,7 @@
+const body = document.getElementsByTagName("body")[0];
+body.style.height = window.innerHeight + "px";
 const container = document.getElementsByClassName("container")[0];
-container.style.height = window.innerHeight + "px";
+const startBtn = document.getElementById("start");
 
 const socket = io();
 
@@ -13,6 +15,10 @@ const getPlayerNames = () => {
 socket.on('connect', () => {
     console.log('Connected to server');
     getPlayerNames();
+});
+
+startBtn.addEventListener('click', () => {
+    socket.emit('startGame');
 });
 
 // This function is called whenever a player joins or leaves the game.
