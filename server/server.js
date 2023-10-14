@@ -11,6 +11,7 @@ const __public = join(__server, "/public");
 const server = createServer(app);
 const io = new Server(server);
 const playerNames = [];
+const playerPixels = [];
 
 app.use(express.static(__public));
 
@@ -44,8 +45,13 @@ io.on('connection', (socket) => {
 		io.emit('startGame');
 	});
 
+	socket.on('stopGame', () => {
+		io.emit('stopGame');
+	});
+
 	socket.on('pixels', (pixels) => {
-		// console.log(pixels);
+		playerPixels[playerNames.indexOf(socket.playerName)] = pixels;
+		io.emit('updatePixels', playerPixels);
 	});
 });
 

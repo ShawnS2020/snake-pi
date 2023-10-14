@@ -42,10 +42,13 @@ def game():
 
     # Game start screen
     senseHat.show_letter("3", GREEN)
+    sio.emit('pixels', senseHat.get_pixels())
     time.sleep(1)
     senseHat.show_letter("2", GREEN)
+    sio.emit('pixels', senseHat.get_pixels())
     time.sleep(1)
     senseHat.show_letter("1", GREEN)
+    sio.emit('pixels', senseHat.get_pixels())
 
     # -----------------------------------
     #             game loop
