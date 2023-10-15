@@ -3,9 +3,8 @@ body.style.height = window.innerHeight + "px";
 const container = document.getElementsByClassName("container")[0];
 const startBtn = document.getElementById("start");
 const stopBtn = document.getElementById("stop");
+const scoresBtn = document.getElementById("scores");
 let players = []
-// let playerNames = [];
-// let playerPixels = [];
 
 const socket = io();
 
@@ -15,11 +14,6 @@ const getPlayerNames = () => {
         players = updatedPlayers;
         refreshDisplay();
     });
-
-    // socket.on('updatePixels', (updatedPlayers) => {
-        // players = updatedPlayers;
-        // refreshDisplay();
-    // });
 };
 
 socket.on('connect', () => {
@@ -35,10 +29,13 @@ stopBtn.addEventListener('click', () => {
     socket.emit('stopGame');
 });
 
+scoresBtn.addEventListener('click', () => {
+    window.location.href = '/scores';
+});
+
 // This function is called whenever a player joins or leaves the game and whenever a player's game loops.
 // It clears the container and creates a game board for each player that is currently connected.
 const refreshDisplay = () => {
-// for (let i = 0; i < players.length; i++) {
     // Clear the container before adding game boards to ensure that no duplicates are created.
     container.innerHTML = '';
     // Create a game board for each player that is currently connected.
