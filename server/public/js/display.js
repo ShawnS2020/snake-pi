@@ -3,22 +3,23 @@ body.style.height = window.innerHeight + "px";
 const container = document.getElementsByClassName("container")[0];
 const startBtn = document.getElementById("start");
 const stopBtn = document.getElementById("stop");
-let playerNames = [];
-let playerPixels = [];
+let players = []
+// let playerNames = [];
+// let playerPixels = [];
 
 const socket = io();
 
 // Gets an array of player names from the server and updates the display.
 const getPlayerNames = () => {
-    socket.on('updatePlayers', (updatedPlayerNames) => {
-        playerNames = updatedPlayerNames;
+    socket.on('updatePlayers', (updatedPlayers) => {
+        players = updatedPlayers;
         refreshDisplay();
     });
 
-    socket.on('updatePixels', (pixels) => {
-        playerPixels = pixels;
-        refreshDisplay();
-    });
+    // socket.on('updatePixels', (updatedPlayers) => {
+        // players = updatedPlayers;
+        // refreshDisplay();
+    // });
 };
 
 socket.on('connect', () => {
@@ -37,10 +38,11 @@ stopBtn.addEventListener('click', () => {
 // This function is called whenever a player joins or leaves the game and whenever a player's game loops.
 // It clears the container and creates a game board for each player that is currently connected.
 const refreshDisplay = () => {
+// for (let i = 0; i < players.length; i++) {
     // Clear the container before adding game boards to ensure that no duplicates are created.
     container.innerHTML = '';
     // Create a game board for each player that is currently connected.
-    for (let i = 0; i < playerNames.length; i++) {
+    for (let i = 0; i < players.length; i++) {
         const playerSpace = document.createElement('div');
         const gameBoard = document.createElement('div');
         const playerName = document.createElement('h1');
@@ -48,7 +50,7 @@ const refreshDisplay = () => {
         playerSpace.classList.add('player-space');
         gameBoard.classList.add('game-board');
         playerName.classList.add('player-name');
-        playerName.innerText = playerNames[i];
+        playerName.innerText = players[i].name;
 
         // Create 8 rows of 8 cells each
         let cellNum = 0;
@@ -60,8 +62,8 @@ const refreshDisplay = () => {
                 const gameCell = document.createElement('div');
                 gameCell.classList.add('game-board-cell');
                 // Only set the background color if the player has submitted pixels.
-                if (playerPixels.length != 0) {
-                    let rgb = playerPixels[i][cellNum];
+                if (players[i].pixels.length != 0) {
+                    let rgb = players[i].pixels[cellNum];
                     gameCell.style.backgroundColor = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
                 }
                 gameRow.appendChild(gameCell);

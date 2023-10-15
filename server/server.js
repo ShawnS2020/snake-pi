@@ -10,8 +10,14 @@ const __server = dirname(__filename);
 const __public = join(__server, "/public");
 const server = createServer(app);
 const io = new Server(server);
-const playerNames = [];
-const playerPixels = [];
+let players = [];
+class Player {
+	constructor(id, name, pixels) {
+		this.id = id;
+		this.name = name;
+		this.pixels = pixels;
+	}
+}
 
 app.use(express.static(__public));
 
@@ -21,24 +27,31 @@ app.get("/", (req, res) => {
 
 io.on('connection', (socket) => {
 	console.log('A client connected');
-	io.emit('updatePlayers', playerNames);
+	io.emit('updatePlayers', players);
 
 	socket.on('disconnect', () => {
 		console.log('a client disconnected');
 
-		// If the disconnected client was a player, update playerNames and emit the new list for the front end to update.
+		// If the disconnected client was a player, update players and emit the new list for the front end to update.
 		if (socket.isPlayer) {
-			playerNames.splice(playerNames.indexOf(socket.playerName), 1);
-			io.emit('updatePlayers', playerNames);
+			let i = players.findIndex(player => player.id == socket.playerId);
+			players.splice(i, 1);
+			io.emit('updatePlayers', players);
 		}
 	});
 
 	socket.on('joinGame', (playerName) => {
 		console.log(`${playerName} joined the game`);
 		socket.isPlayer = true;
-		socket.playerName = playerName;
-		playerNames.push(playerName);
-		io.emit('updatePlayers', playerNames)
+		// Find the lowest id that is not already taken.
+		let newId = 0;
+		while (players.some(player => player.id == newId)) {
+			newId ++;
+		}
+		socket.playerId = newId;
+		let player = new Player(newId, playerName, []);
+		players.push(player);
+		io.emit('updatePlayers', players)
 	});
 
 	socket.on('startGame', () => {
@@ -50,8 +63,10 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('pixels', (pixels) => {
-		playerPixels[playerNames.indexOf(socket.playerName)] = pixels;
-		io.emit('updatePixels', playerPixels);
+		let i = players.findIndex(player => player.id == socket.playerId);
+		players[i].pixels = pixels;
+
+		io.emit('updatePlayers', players);
 	});
 });
 
