@@ -5,7 +5,7 @@ import socketio
 
 senseHat = SenseHat()
 senseHat.clear()
-sio = socketio.Client()
+socket = socketio.Client()
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 WHITE = (0, 0, 0)
@@ -44,20 +44,20 @@ def game():
 
     # Game start screen
     senseHat.show_letter("3", GREEN)
-    sio.emit('pixels', senseHat.get_pixels())
+    socket.emit('pixels', senseHat.get_pixels())
     time.sleep(1)
     senseHat.show_letter("2", GREEN)
-    sio.emit('pixels', senseHat.get_pixels())
+    socket.emit('pixels', senseHat.get_pixels())
     time.sleep(1)
     senseHat.show_letter("1", GREEN)
-    sio.emit('pixels', senseHat.get_pixels())
+    socket.emit('pixels', senseHat.get_pixels())
 
     # -----------------------------------
     #             game loop
     # -----------------------------------
     while not gameOverFlag:
 
-        sio.emit('pixels', senseHat.get_pixels())
+        socket.emit('pixels', senseHat.get_pixels())
 
         # check if snake eats food:
         if foodPosX == snakePosX[0] and foodPosY == snakePosY[0]:
@@ -150,20 +150,20 @@ def game():
         for x, y in zip(snakePosX, snakePosY):
             senseHat.set_pixel(x, y, GREEN)
 
-@sio.event
+@socket.event
 def connect():
     name = input("Enter your name: ")
-    sio.emit('joinGame', name)
+    socket.emit('joinGame', name)
     print('Connected to the server')
 
-@sio.on('startGame')
+@socket.on('startGame')
 def startGame():
     print('Game started')
     global gameOverFlag
     gameOverFlag = False
     game()
 
-@sio.on('stopGame')
+@socket.on('stopGame')
 def stopGame():
     print('Game over')
     global gameOverFlag
@@ -172,8 +172,8 @@ def stopGame():
 ip = input("Enter the server's IP address: ")
 
 try:
-    sio.connect('http://' + ip + ':3000')
-    sio.wait()
+    socket.connect('http://' + ip + ':3000')
+    socket.wait()
 except:
     print("Could not connect to the server")
     exit()
