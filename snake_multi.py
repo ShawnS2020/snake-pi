@@ -152,9 +152,9 @@ def game():
 
 @socket.event
 def connect():
+    print('Connected to the server')
     name = input("Enter your name: ")
     socket.emit('joinGame', name)
-    print('Connected to the server')
 
 @socket.on('startGame')
 def startGame():
@@ -169,10 +169,15 @@ def stopGame():
     global gameOverFlag
     gameOverFlag = True
 
-ip = input("Enter the server's IP address: ")
+isMediator = input("Is your Pi connected to the internet? (y/n): ")
+
+if (isMediator == 'y'):
+    url = 'https://presently-fresh-kingfish.ngrok-free.app'
+else:
+    url = 'http://localhost:3000'
 
 try:
-    socket.connect('http://' + ip + ':3000')
+    socket.connect(url)
     socket.wait()
 except:
     print("Could not connect to the server")
