@@ -43,6 +43,14 @@ ioServer.on('connection', (socket) => {
 		}
 	});
 
+	// This is a unique event that the mediator server emits when its player disconnects.
+	socket.on('playerDisconnect', (playerName) => {
+		console.log(`${playerName} disconnected`);
+		let i = players.findIndex(player => player.name == playerName);
+		players.splice(i, 1);
+		ioServer.emit('updatePlayerCount', players);
+	});
+
 	// Emitted by snake_multi.py when a player joins the game.
 	socket.on('joinGame', (playerName) => {
 		console.log(`${playerName} joined the game`);

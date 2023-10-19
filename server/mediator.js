@@ -14,14 +14,38 @@ const __public = join(__server, "/public");
 
 app.use(express.static(__public));
 
-const socket = ioClient.connect('presently-fresh-kingfish.ngrok-free.app');
+const mediatorSocket = ioClient.connect('https://presently-fresh-kingfish.ngrok-free.app');
 
-socket.on('connect', () => {
+mediatorSocket.on('connect', () => {
     console.log('Connected to server');
+
+    mediatorSocket.on('startGame', () => {
+        ioServer.emit('startGame');
+    });
+
+    mediatorSocket.on('stopGame', () => {
+        ioServer.emit('stopGame');
+    });
 })
 
-ioServer.on('connection', (socket) => {
+ioServer.on('connection', (playerSocket) => {
 	console.log('A client connected');
+    let name = '';
+
+    playerSocket.on('disconnect', () => {
+		console.log(`${name} disconnected`);
+        mediatorSocket.emit('playerDisconnect', name);
+    });
+
+    playerSocket.on('joinGame', (playerName) => {
+        console.log(`${playerName} joined the game`);
+        name = playerName;
+        mediatorSocket.emit('joinGame', playerName);
+    });
+
+	playerSocket.on('pixels', (pixels) => {
+        mediatorSocket.emit('pixels', pixels);
+    });
 });
 
-ioServer.listen(8080, () => console.log("Server started on port 8080"));
+httpServer.listen(8080, () => console.log("Server started on port 8080"));
