@@ -5,11 +5,11 @@ import { Server } from "socket.io";
 import { createServer } from "http";
 
 const app = express();
+const httpServer = createServer(app);
+const ioServer = new Server(httpServer);
 const __filename = fileURLToPath(import.meta.url);
 const __server = dirname(__filename);
 const __public = join(__server, "/public");
-const server = createServer(app);
-const io = new Server(server);
 let players = [];
 class Player {
 	constructor(id, name, pixels) {
@@ -29,9 +29,9 @@ app.get("/scores", (req, res) => {
 	res.sendFile(join(__public, "/html/scores.html"));
 });
 
-io.on('connection', (socket) => {
+ioServer.on('connection', (socket) => {
 	console.log('A client connected');
-	io.emit('updatePlayers', players);
+	ioServer.emit('updatePlayerCount', players);
 
 	socket.on('disconnect', () => {
 		console.log('a client disconnected');
@@ -39,7 +39,7 @@ io.on('connection', (socket) => {
 		if (socket.isPlayer) {
 			let i = players.findIndex(player => player.id == socket.playerId);
 			players.splice(i, 1);
-			io.emit('updatePlayerCount', players);
+			ioServer.emit('updatePlayerCount', players);
 		}
 	});
 
@@ -55,25 +55,26 @@ io.on('connection', (socket) => {
 		socket.playerId = newId;
 		let player = new Player(newId, playerName, []);
 		players.push(player);
-		io.emit('updatePlayerCount', players)
+		ioServer.emit('updatePlayerCount', players)
 	});
 
 	// Emitted by snake_multi.py every time the game loops.
 	socket.on('pixels', (pixels) => {
 		let i = players.findIndex(player => player.id == socket.playerId);
 		players[i].pixels = pixels;
-		io.emit('updatePixels', players);
+		let updatedPlayer = players[i];
+		ioServer.emit('updatePixels', updatedPlayer);
 	});
 
 	// Emitted by the front end when the user clicks the start button.
 	socket.on('startGame', () => {
-		io.emit('startGame');
+		ioServer.emit('startGame');
 	});
 
 	// Emitted by the front end when the user clicks the stop button.
 	socket.on('stopGame', () => {
-		io.emit('stopGame');
+		ioServer.emit('stopGame');
 	});
 });
 
-server.listen(3000, () => console.log("Server started on port 3000"));
+httpServer.listen(3000, () => console.log("Server started on port 3000"));
