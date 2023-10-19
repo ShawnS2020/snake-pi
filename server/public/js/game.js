@@ -10,7 +10,12 @@ const socket = io();
 
 // Gets an array of player names from the server and updates the display.
 const getPlayerNames = () => {
-    socket.on('updatePlayers', (updatedPlayers) => {
+    socket.on('updatePlayerCount', (updatedPlayers) => {
+        players = updatedPlayers;
+        updatePlayerBoardCount(players);
+    });
+
+    socket.on('updatePixels', (updatedPlayers) => {
         players = updatedPlayers;
         refreshDisplay();
     });
@@ -35,7 +40,7 @@ scoresBtn.addEventListener('click', () => {
 
 // This function is called whenever a player joins or leaves the game and whenever a player's game loops.
 // It clears the container and creates a game board for each player that is currently connected.
-const refreshDisplay = () => {
+function updatePixels() {
     // Clear the container before adding game boards to ensure that no duplicates are created.
     container.innerHTML = '';
     // Create a game board for each player that is currently connected.
@@ -72,3 +77,34 @@ const refreshDisplay = () => {
         container.appendChild(playerSpace);
     }
 };
+
+function updatePlayerBoardCount(players) {
+    // Clear the container before adding game boards to ensure that no duplicates are created.
+    container.innerHTML = '';
+    // Create a game board for each player that is currently connected.
+    for (let i = 0; i < players.length; i++) {
+        const playerContainer = document.createElement('div');
+        const playerBoard = document.createElement('div');
+        const playerName = document.createElement('h1');
+
+        playerContainer.classList.add('player-space');
+        playerBoard.classList.add('game-board');
+        playerName.classList.add('player-name');
+        playerName.innerText = players[i].name;
+
+        // Create 8 rows of 8 cells each
+        for (let j = 0; j < 8; j++) {
+            const gameRow = document.createElement('div');
+            gameRow.classList.add('game-board-row');
+
+            for (let k = 0; k < 8; k++) {
+                const gameCell = document.createElement('div');
+                gameCell.classList.add('game-board-cell');
+                gameRow.appendChild(gameCell);
+            }
+            playerBoard.appendChild(gameRow);
+        }
+        playerContainer.append(playerBoard, playerName);
+        container.appendChild(playerContainer);
+    }
+}

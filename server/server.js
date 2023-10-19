@@ -39,7 +39,7 @@ io.on('connection', (socket) => {
 		if (socket.isPlayer) {
 			let i = players.findIndex(player => player.id == socket.playerId);
 			players.splice(i, 1);
-			io.emit('updatePlayers', players);
+			io.emit('updatePlayerCount', players);
 		}
 	});
 
@@ -55,14 +55,14 @@ io.on('connection', (socket) => {
 		socket.playerId = newId;
 		let player = new Player(newId, playerName, []);
 		players.push(player);
-		io.emit('updatePlayers', players)
+		io.emit('updatePlayerCount', players)
 	});
 
 	// Emitted by snake_multi.py every time the game loops.
 	socket.on('pixels', (pixels) => {
 		let i = players.findIndex(player => player.id == socket.playerId);
 		players[i].pixels = pixels;
-		io.emit('updatePlayers', players);
+		io.emit('updatePixels', players);
 	});
 
 	// Emitted by the front end when the user clicks the start button.
