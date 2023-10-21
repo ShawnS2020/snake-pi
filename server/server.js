@@ -23,6 +23,7 @@ class Player {
 		this.name = name;
 		this.color = color;
 		this.pixels = [];
+		this.scoreGraph = [];
 	}
 }
 
@@ -34,6 +35,10 @@ app.get("/", (req, res) => {
 
 app.get("/scores", (req, res) => {
 	res.sendFile(join(__public, "/html/scores.html"));
+});
+
+app.get('/players', (req, res) => {
+	res.send(players);
 });
 
 ioServer.on('connection', (socket) => {
@@ -87,12 +92,18 @@ ioServer.on('connection', (socket) => {
 		socket.emit('playerColor', playerColor)
 	});
 
-	// Emitted by snake_multi.py every time the game loops.
+	// Player's LED array is emitted by snake_multi.py every time the game loops.
 	socket.on('pixels', (pixels) => {
 		let i = players.findIndex(player => player.id == socket.playerId);
 		players[i].pixels = pixels;
 		let updatedPlayer = players[i];
 		ioServer.emit('updatePixels', updatedPlayer);
+	});
+
+	// Player's score graph is emitted by snake_multi.py when the player loses.
+	socket.on('scoreGraph', (scoreGraph) => {
+		let i = players.findIndex(player => player.id == socket.playerId);
+		players[i].scoreGraph = scoreGraph;
 	});
 
 	// Emitted by the front end when the user clicks the start button.
