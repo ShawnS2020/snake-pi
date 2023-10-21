@@ -1,0 +1,3 @@
+[submodule "multiplayer-snake"]
+	path = multiplayer-snake
+	url = https://github.com/ShawnS2020/multiplayer-snake.git
