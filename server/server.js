@@ -10,6 +10,7 @@ const ioServer = new Server(httpServer);
 const __filename = fileURLToPath(import.meta.url);
 const __server = dirname(__filename);
 const __public = join(__server, "/public");
+let isGameRunning = false;
 let players = [];
 class Player {
 	constructor(id, name, pixels) {
@@ -53,6 +54,12 @@ ioServer.on('connection', (socket) => {
 
 	// Emitted by snake_multi.py when a player joins the game.
 	socket.on('joinGame', (playerName) => {
+		// Don't allow more than 10 players.
+		if (players.length >= 10 || isGameRunning) {
+			socket.emit('gameFull');
+			socket.disconnect();
+			return;
+		}
 		console.log(`${playerName} joined the game`);
 		socket.isPlayer = true;
 		// Find the lowest id that is not already taken.
@@ -76,11 +83,13 @@ ioServer.on('connection', (socket) => {
 
 	// Emitted by the front end when the user clicks the start button.
 	socket.on('startGame', () => {
+		isGameRunning = true;
 		ioServer.emit('startGame');
 	});
 
 	// Emitted by the front end when the user clicks the stop button.
 	socket.on('stopGame', () => {
+		isGameRunning = false;
 		ioServer.emit('stopGame');
 	});
 });
