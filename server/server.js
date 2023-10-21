@@ -10,12 +10,18 @@ const ioServer = new Server(httpServer);
 const __filename = fileURLToPath(import.meta.url);
 const __server = dirname(__filename);
 const __public = join(__server, "/public");
+// This variable is used to prevent more than 10 players from joining the game.
 let isGameRunning = false;
+// Create an array of colors to assign to players.
+// Each element is a 3-tuple of RGB values.
+// The colors are Green, Blue, Yellow, Apricot, Cyan, Orange, Pink, Purple, Dark Green, and White.
+const colors = [[0, 255, 0], [0, 0, 255], [255, 255, 0], [255, 192, 128], [0, 255, 255], [255, 128, 0], [255, 128, 192], [128, 0, 128], [0, 100, 0], [255, 255, 255]];
 let players = [];
 class Player {
-	constructor(id, name, pixels) {
+	constructor(id, name, color, pixels) {
 		this.id = id;
 		this.name = name;
+		this.color = color;
 		this.pixels = pixels;
 	}
 }
@@ -68,9 +74,17 @@ ioServer.on('connection', (socket) => {
 			newId ++;
 		}
 		socket.playerId = newId;
-		let player = new Player(newId, playerName, []);
+		// Let the player's color be the earliest color that is not already taken.
+		let playerColor = colors[0];
+		let i = 0;
+		while (players.some(player => player.color == playerColor)) {
+			i ++;
+			playerColor = colors[i];
+		}
+		let player = new Player(newId, playerName, playerColor, []);
 		players.push(player);
 		ioServer.emit('updatePlayerCount', players)
+		socket.emit('playerColor', playerColor)
 	});
 
 	// Emitted by snake_multi.py every time the game loops.
