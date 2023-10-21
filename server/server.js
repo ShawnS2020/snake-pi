@@ -18,11 +18,11 @@ let isGameRunning = false;
 const colors = [[0, 255, 0], [0, 0, 255], [255, 255, 0], [255, 192, 128], [0, 255, 255], [255, 128, 0], [255, 128, 192], [128, 0, 128], [0, 100, 0], [255, 255, 255]];
 let players = [];
 class Player {
-	constructor(id, name, color, pixels) {
+	constructor(id, name, color) {
 		this.id = id;
 		this.name = name;
 		this.color = color;
-		this.pixels = pixels;
+		this.pixels = [];
 	}
 }
 
@@ -81,7 +81,7 @@ ioServer.on('connection', (socket) => {
 			i ++;
 			playerColor = colors[i];
 		}
-		let player = new Player(newId, playerName, playerColor, []);
+		let player = new Player(newId, playerName, playerColor);
 		players.push(player);
 		ioServer.emit('updatePlayerCount', players)
 		socket.emit('playerColor', playerColor)
