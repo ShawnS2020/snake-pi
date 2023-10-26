@@ -12,16 +12,12 @@ homeBtn.addEventListener('click', () => {
     window.location.href = '/';
 });
 
-// An array of 10 players with random properties for testing.
+// // An array of 10 players with random properties for testing.
 // players = Array(10).fill(0).map(() => {
-//     // Generate a random color in hex format.
-//     let color = '#';
+//     // Generate a random color in rgb format.
+//     let color = [];
 //     for (let i = 0; i < 3; i ++) {
-//         let component = Math.floor(Math.random() * 256).toString(16);
-//         if (component.length == 1) {
-//             component = '0' + component;
-//         }
-//         color += component;
+//         color.push(Math.floor(Math.random() * 256));
 //     }
 //     // Generate a random score graph.
 //     let randomGraph = [0];
@@ -42,6 +38,7 @@ homeBtn.addEventListener('click', () => {
 // Individual charts for each player.
 for (let i = 0; i < players.length; i ++) {
     const player = players[i];
+    console.log(player)
     const chartContainer = document.createElement('div');
     const canvas = document.createElement('canvas');
     chartContainer.classList.add('chart');
