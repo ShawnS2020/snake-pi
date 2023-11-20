@@ -40,6 +40,10 @@ app.get("/scores", (req, res) => {
 	res.sendFile(join(__public, "/html/scores.html"));
 });
 
+app.get("/highscores", (req, res) => {
+	res.sendFile(join(__public, "/html/highscores.html"));
+});
+
 app.get('/players', (req, res) => {
 	res.send(players);
 });
