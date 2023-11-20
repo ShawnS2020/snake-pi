@@ -7,52 +7,10 @@ const homeBtn = document.getElementById("home");
 const response = await fetch('/players');
 let players = await response.json();
 console.log(players)
-const response2 = await fetch('/scorelist');
-let scorelist = await response2.json();
-console.log(scorelist)
 
 homeBtn.addEventListener('click', () => {
     window.location.href = '/';
 });
-
-const dropdown = document.getElementById("myDropdown");
-
-async function populateDropdown() {
-    const response = await fetch("/scorelist");
-    const scorelist = await response.json();
-    console.log(scorelist);
-
-    // Clear existing options
-    dropdown.innerHTML = "";
-
-    // Add a default option
-    const defaultOption = document.createElement("option");
-    defaultOption.value = "";
-    defaultOption.text = "Select an option";
-    dropdown.appendChild(defaultOption);
-
-    // Populate options from the array of JSON data
-    const dateTimeFormat = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        second: "numeric",
-        hour12: true,
-    });
-
-    for (let i = 0; i < scorelist.length; i++) {
-        const option = document.createElement("option");
-        const timestamp = new Date(scorelist[i].time * 1000);
-        option.value = scorelist[i].time; // Use the "time" key
-        option.text = dateTimeFormat.format(timestamp);
-        dropdown.appendChild(option);
-    }
-}
-
-// Call the populateDropdown function to initialize the dropdown
-populateDropdown();
 
 // An array of 10 players with random properties for testing.
 // players = Array(10).fill(0).map(() => {
@@ -202,48 +160,3 @@ new Chart(bigChart, {
         }
     }
 });
-
-// Function to update the big chart with game data
-function updateBigChart(gamesData, chart) {
-    // Clear existing datasets
-    bigChart.data.datasets = [];
-
-    // Add datasets for each player's scoreGraph
-    for (const playerData of gamesData) {
-        bigChart.data.datasets.push({
-            label: playerData.name,
-            data: playerData.scoreGraph,
-            borderWidth: 4,
-            borderColor: `rgb(${playerData.color[0]}, ${playerData.color[1]}, ${playerData.color[2]})`,
-            pointRadius: 0,
-        });
-    }
-
-    // Update chart axes based on the new data
-    bigChart.options.scales.x.max = gamesData[0].scoreGraph.length - 1;
-    bigChart.update();
-}
-
-// Event listener for the dropdown change event
-dropdown.addEventListener('change', (event) => {
-    const selectedTimestamp = event.target.value;
-
-    if (selectedTimestamp) {
-        console.log('Selected Timestamp:', selectedTimestamp);
-
-        // Filter the scorelist array for the selected timestamp
-        const gamesData = scorelist.filter(item => item.time == selectedTimestamp)[0].data;
-
-        console.log('Filtered Game Data:', gamesData);
-
-        if (gamesData && gamesData.length > 0) {
-            console.log('Updating Big Chart with Game Data:', gamesData);
-            updateBigChart(gamesData, bigChart);
-        } else {
-            console.error('No game data found for the selected timestamp.');
-        }
-    }
-});
-
-
-// Continue with the rest of your code...
