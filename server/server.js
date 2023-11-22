@@ -3,6 +3,8 @@ import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { Server } from "socket.io";
 import { createServer } from "http";
+import Papa from 'papaparse'
+import fs from "fs";
 
 const app = express();
 const httpServer = createServer(app);
@@ -17,6 +19,7 @@ let isGameRunning = false;
 // The colors are Green, Blue, Yellow, Apricot, Cyan, Orange, Pink, Purple, Dark Green, and White.
 const colors = [[0, 255, 0], [0, 0, 255], [255, 255, 0], [255, 192, 128], [0, 255, 255], [255, 128, 0], [255, 128, 192], [128, 0, 128], [0, 100, 0], [255, 255, 255]];
 let players = [];
+let scorelist = [];
 class Player {
 	constructor(id, name, color) {
 		this.id = id;
@@ -37,8 +40,31 @@ app.get("/scores", (req, res) => {
 	res.sendFile(join(__public, "/html/scores.html"));
 });
 
+app.get("/highscores", (req, res) => {
+	res.sendFile(join(__public, "/html/highscores.html"));
+});
+
 app.get('/players', (req, res) => {
 	res.send(players);
+});
+
+app.get('/scorelist', (req, res) => {
+	fs.readFile('data.csv', 'utf8', (err, data) => {
+	if (err) {
+		console.error(err);
+		return;
+	}
+		Papa.parse(data, {
+			delimiter: "|",
+			header: true,
+			skipEmptyLines: true,
+			complete: function(results) {
+				//console.log(results);
+				let scorelist = results.data;
+				res.send(scorelist);
+			}
+		});
+	});
 });
 
 ioServer.on('connection', (socket) => {
@@ -46,7 +72,7 @@ ioServer.on('connection', (socket) => {
 	ioServer.emit('updatePlayerCount', players);
 
 	socket.on('disconnect', () => {
-		console.log('a client disconnected');
+		console.log('A client disconnected');
 		// If the disconnected client was a player, update players and emit the new list for the front end to update.
 		if (socket.isPlayer) {
 			let i = players.findIndex(player => player.id == socket.playerId);
@@ -104,6 +130,14 @@ ioServer.on('connection', (socket) => {
 	socket.on('scoreGraph', (scoreGraph) => {
 		let i = players.findIndex(player => player.id == socket.playerId);
 		players[i].scoreGraph = scoreGraph;
+		//console.log(scoreGraph);
+		//let highScore = scoreGraph[scoreGraph.length - 1];
+		let playerName = players[i].name;
+		let currentTimestamp = Math.floor(new Date().getTime() / 1000);
+		fs.appendFileSync("data.csv", playerName + "|" + currentTimestamp + "|[" + scoreGraph + "]\n", "utf-8", (err) => {
+			if (err) console.log(err);
+			else console.log("Data saved");
+		});
 	});
 
 	// Emitted by the front end when the user clicks the start button.
