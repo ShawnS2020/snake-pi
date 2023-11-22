@@ -14,8 +14,11 @@ homeBtn.addEventListener('click', () => {
 
 // Custom comparison function to sort by the last entry in the array in descending order
 function compareByLastEntryDescending(a, b) {
-    const lastEntryA = a.data[a.data.length - 2];
-    const lastEntryB = b.data[b.data.length - 2];
+
+    const parseA = JSON.parse(a.data);
+    const parseB = JSON.parse(b.data);
+    const lastEntryA = parseA[parseA.length - 1];
+    const lastEntryB = parseB[parseB.length - 1];
 
     // Compare numeric values directly
     return lastEntryB - lastEntryA;
@@ -53,11 +56,18 @@ function populateTable(data) {
         var cell2 = row.insertCell(1);
         var cell3 = row.insertCell(2);
 
+        let scoreArray = JSON.parse(item.data)
+        //console.log(scoreArray)
+
+        if (scoreArray[scoreArray.length - 1] == undefined) {
+            scoreArray.push(0);
+        }
+
         // Populate cells with data from JSON
         cell1.innerHTML = item.name;
         const timestamp = new Date(item.time * 1000);
         cell2.innerHTML = dateTimeFormat.format(timestamp);
-        cell3.innerHTML = item.data[item.data.length - 2];
+        cell3.innerHTML = scoreArray[scoreArray.length - 1];
     });
 }
 
