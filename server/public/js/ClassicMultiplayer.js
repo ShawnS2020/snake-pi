@@ -5,6 +5,7 @@ const startBtn = document.getElementById("start");
 const stopBtn = document.getElementById("stop");
 const scoresBtn = document.getElementById("scores");
 const highScoresBtn = document.getElementById("highscores");
+const backBtn = document.getElementById("back");
 let players = [];
 
 const socket = io();
@@ -47,6 +48,10 @@ scoresBtn.addEventListener('click', () => {
 
 highScoresBtn.addEventListener('click', () => {
     window.location.href = '/highscores';
+});
+
+backBtn.addEventListener('click', () => {
+    window.location.href = '/';
 });
 
 // Updates the pixels of the player's board at the given index.

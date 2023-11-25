@@ -1,0 +1,47 @@
+* {
+    margin: 0;
+    font-family: sans-serif;
+}
+
+body {
+    height: 100vh;
+    background-color: #808080;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+h1 {
+    font-size: 4em;
+    margin: 1em 0;
+}
+
+h2 {
+    font-size: 2em;
+    margin: 1em 0;
+}
+
+.game-mode {
+    height: 60px;
+    width: 300px;
+    background-color: #90ff90;
+    border: solid 4px #fff;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
+}
+
+.game-mode p {
+    font-size: 2em;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-weight: bold;
+}

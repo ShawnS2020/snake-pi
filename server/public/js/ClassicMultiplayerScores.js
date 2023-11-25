@@ -9,7 +9,7 @@ let players = await response.json();
 console.log(players)
 
 homeBtn.addEventListener('click', () => {
-    window.location.href = '/';
+    window.location.href = '/classic';
 });
 
 // // An array of 10 players with random properties for testing.

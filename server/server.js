@@ -33,15 +33,23 @@ class Player {
 app.use(express.static(__public));
 
 app.get("/", (req, res) => {
-	res.sendFile(join(__public, "/html/game.html"));
+	res.sendFile(join(__public, "/html/GameModeSelectScreen.html"));
+});
+
+app.get("/classic", (req, res) => {
+	res.sendFile(join(__public, "/html/ClassicMultiplayer.html"));
+});
+
+app.get("/slitherio", (req, res) => {
+	res.sendFile(join(__public, "/html/slitherio.html"));
 });
 
 app.get("/scores", (req, res) => {
-	res.sendFile(join(__public, "/html/scores.html"));
+	res.sendFile(join(__public, "/html/ClassicMultiplayerScores.html"));
 });
 
 app.get("/highscores", (req, res) => {
-	res.sendFile(join(__public, "/html/highscores.html"));
+	res.sendFile(join(__public, "/html/ClassicMultiplayerHighScores.html"));
 });
 
 app.get('/players', (req, res) => {
@@ -49,7 +57,7 @@ app.get('/players', (req, res) => {
 });
 
 app.get('/scorelist', (req, res) => {
-	fs.readFile('data.csv', 'utf8', (err, data) => {
+	fs.readFile('server/data.csv', 'utf8', (err, data) => {
 	if (err) {
 		console.error(err);
 		return;

@@ -9,7 +9,7 @@ let scorelist = await response.json();
 //console.log(scorelist)
 
 homeBtn.addEventListener('click', () => {
-    window.location.href = '/';
+    window.location.href = '/classic';
 });
 
 // Custom comparison function to sort by the last entry in the array in descending order
