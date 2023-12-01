@@ -4,9 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="./css/SlitherioStyles.css" rel="stylesheet">
+	<script src="/socket.io/socket.io.js"></script>
+    <script src="./js/Slitherio.js" type="module"></script>
     <title>Snake</title>
 </head>
 <body>
-    <div class="game-board"></div>
+    <div class="roster"></div>
+    <div class="wrapper">
+        <div class="game-board"></div>
+        <button class="start-button">Start</button>
+        <button class="stop-button">Stop</button>
+    </div>
 </body>
 </html>

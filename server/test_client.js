@@ -8,6 +8,8 @@ socket.on('connect', () => {
     console.log('Connected to server');
 })
 
-socket.emit('joinGame', 'test client')
+// socket.emit('joinGame', 'test client')
 
-socket.emit('pixels', pixels)
+// socket.emit('pixels', pixels)
+
+socket.emit('joinSlitherio', 'Shawn');
