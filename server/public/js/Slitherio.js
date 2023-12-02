@@ -12,19 +12,18 @@ stopBtn.addEventListener('click', () => {
 });
 
 /*** Play from the front end for testing purposes only ***/
-/*** TODO: movement event emits too late ***/
-socket.on('getMovement', playerId => {
-    if (playerId != 0) return;
-    let key = '';
-    function keydownHandler(e) {
-        if ((e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
-            key = e.key;
-            socket.emit('movement', { playerId: playerId, key: key });
-        }
-    };
-
-    document.addEventListener('keydown', keydownHandler);
-});
+// socket.on('getMovement', playerId => {
+//     if (playerId != 0) return;
+//     let key = '';
+//     function keydownHandler(e) {
+//         if ((e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+//             key = e.key;
+//             socket.emit('movement', { playerId: playerId, key: key });
+//         }
+//     };
+// 
+//     document.addEventListener('keydown', keydownHandler);
+// });
 
 const gameBoard = document.getElementsByClassName('game-board')[0];
 // Create the game board.

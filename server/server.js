@@ -39,7 +39,7 @@ class SlitherioPlayer {
 		this.id = id;
 		this.name = name;
 		this.color = color;
-		this.movDelay = 350;
+		this.movDelay = 1000;
 		this.posX = [0];
 		this.posY = [0];
 		this.prevMovX = 0;
@@ -208,9 +208,8 @@ ioServer.on('connection', (socket) => {
 		}
 		let player = new SlitherioPlayer(newId, playerName, playerColor);
 		players.push(player);
-		console.log(players);
 		ioServer.emit('updatePlayerCount', players)
-		socket.emit('playerColor', playerColor)
+		socket.emit('playerId', newId);
 	});
 
 	socket.on('startSlitherio', () => {
@@ -226,18 +225,18 @@ ioServer.on('connection', (socket) => {
 	});
 
 	socket.on('movement', movementObj => {
-		const { playerId, key } = movementObj;
+		const { playerId, movX, movY } = movementObj;
 		const i = players.findIndex(player => player.id == playerId);
-		if (key == 'ArrowUp' && players[i].prevMovY != 1) {
+		if (movX == 0 && movY == -1 && players[i].prevMovY != 1) {
 			players[i].movX = 0;
 			players[i].movY = -1;
-		} else if (key == 'ArrowDown' && players[i].prevMovY != -1) {
+		} else if (movX == 0 && movY == 1 && players[i].prevMovY != -1) {
 			players[i].movX = 0;
 			players[i].movY = 1;
-		} else if (key == 'ArrowLeft' && players[i].prevMovX != 1) {
+		} else if (movX == -1 && movY == 0 && players[i].prevMovX != 1) {
 			players[i].movX = -1;
 			players[i].movY = 0;
-		} else if (key == 'ArrowRight' && players[i].prevMovX != -1) {
+		} else if (movX == 1 && movY == 0 && players[i].prevMovX != -1) {
 			players[i].movX = 1;
 			players[i].movY = 0;
 		}
@@ -246,4 +245,4 @@ ioServer.on('connection', (socket) => {
 
 httpServer.listen(3000, () => console.log("Server started on port 3000"));
 
-export { ioServer, players }
+export { ioServer, players, colors }

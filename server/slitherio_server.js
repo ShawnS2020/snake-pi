@@ -1,4 +1,4 @@
-import { ioServer, players } from './server.js';
+import { ioServer, players, colors } from './server.js';
 
 // create a variable called boardArray that is an array of 200 null elements
 let boardArray = [];
@@ -9,13 +9,22 @@ function setGameOver() {
     console.log("Game over");
 }
 
+function getPixel(x, y) {
+    return boardArray[x + (y * 40)];
+}
+
+function setPixel(x, y, color) {
+    boardArray[x + (y * 40)] = color;
+    ioServer.emit('updateBoard', boardArray);
+}
+
 async function generateFood() {
     while (!gameOverFlag) {
         let foodPosX;
         let foodPosY;
         while (1) {
-            foodPosX = Math.floor(Math.random() * 40);
-            foodPosY = Math.floor(Math.random() * 20);
+            foodPosX = Math.floor(Math.random() * 39);
+            foodPosY = Math.floor(Math.random() * 19);
             const pixel = getPixel(foodPosX, foodPosY);
             if (pixel[0] == 0 && pixel[1] == 0 && pixel[2] == 0) break;
         }
@@ -32,7 +41,12 @@ function killSnake(snakeIndex) {
 }
 
 async function moveSnake(snakeIndex) {
-    while (!players[snakeIndex].gameOver) {
+
+    // Check if the player's snake still exists (in case they quit) and is not game over.
+    while (players[snakeIndex] && !players[snakeIndex].gameOver) {
+        // prevMov variables are used in server.js  'movement' event to prevent the snake from turning 180 degrees.
+        players[snakeIndex].prevMovX = players[snakeIndex].movX;
+        players[snakeIndex].prevMovY = players[snakeIndex].movY;
 
         // Check for collisions
         const nextPixelX = players[snakeIndex].posX[0] + players[snakeIndex].movX;
@@ -78,15 +92,39 @@ async function moveSnake(snakeIndex) {
 
         await new Promise(resolve => { setTimeout(resolve, players[snakeIndex].movDelay) });
     }
-}
 
-function getPixel(x, y) {
-    return boardArray[x + (y * 40)];
-}
+    // If a player quits, turn their snake into food.
+    if (!players[snakeIndex]) {
+        // Create an array of each color found in boardArray.
+        let colorsInUse = [[0, 0, 0], [255, 0, 0]];
+        for (let i = 0; i < players.length; i ++) {
+            colorsInUse.push(players[i].color);
+        }
 
-function setPixel(x, y, color) {
-    boardArray[x + (y * 40)] = color;
-    ioServer.emit('updateBoard', boardArray);
+        // Compare colorsInUse to colors from server.js to find each color that is not in use.
+        let colorsNotInUse = colors.filter(color => !colorsInUse.includes(color));
+
+        // Use getPixel to find the coordinates of any pixels that are a color that is not in use.
+        for (let i = 0; i < 39; i++) {
+            for (let j = 0; j < 19; j++) {
+                let color = getPixel(i, j);
+                if (colorsNotInUse.some(colorNotInUse => areColorsEqual(colorNotInUse, color))) {
+                    setPixel(i, j, [255, 0, 0]);
+                }
+            }
+        }
+
+        // Custom function to check if two colors are equal
+        function areColorsEqual(color1, color2) {
+            // Assuming both colors are arrays of the same length
+            for (let k = 0; k < color1.length; k++) {
+                if (color1[k] !== color2[k]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
 }
 
 async function slitherioGame() {
@@ -111,22 +149,9 @@ async function slitherioGame() {
 
     // Asynchronously move snakes.
     const movePromises = Array.from({ length: players.length }, async (_, i) => {
-        // if (i == 0) return;
         moveSnake(i);
     });
     await Promise.all(movePromises);
-
-    // Move snakes.
-    const promises = Array.from({ length: players.length }, async (_, i) => {
-        // if (i == 0) return;
-        while (!players[i].gameOver) {
-            players[i].prevMovX = players[i].movX;
-            players[i].prevMovY = players[i].movY;
-            ioServer.emit('getMovement', players[i].id);
-            await new Promise(resolve => { setTimeout(resolve, players[i].movDelay) });
-        }
-    });
-    await Promise.all(promises);
 }
 
 export { slitherioGame, boardArray, setGameOver, moveSnake };
