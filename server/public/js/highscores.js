@@ -15,13 +15,23 @@ homeBtn.addEventListener('click', () => {
 // Custom comparison function to sort by the last entry in the array in descending order
 function compareByLastEntryDescending(a, b) {
 
-    const parseA = JSON.parse(a.data);
-    const parseB = JSON.parse(b.data);
-    const lastEntryA = parseA[parseA.length - 1];
-    const lastEntryB = parseB[parseB.length - 1];
+    //console.log(a);
+    let parseA = a.data.split(",");
+    let parseB = b.data.split(",");
+    // if data is empty, set last score to 0
+    if (parseA[parseA.length - 1] === "") {
+        parseA.push(0);
+    }
+    if (parseB[parseB.length - 1] === "") {
+        parseB.push(0);
+    }
+    const lastA = parseA[parseA.length - 1]
+    const lastB = parseB[parseB.length - 1]
+    //console.log(parseA);
+    //console.log(parseB);
 
     // Compare numeric values directly
-    return lastEntryB - lastEntryA;
+    return lastB - lastA;
 }
 
 
@@ -56,18 +66,18 @@ function populateTable(data) {
         var cell2 = row.insertCell(1);
         var cell3 = row.insertCell(2);
 
-        let scoreArray = JSON.parse(item.data)
-        //console.log(scoreArray)
-
-        if (scoreArray[scoreArray.length - 1] == undefined) {
-            scoreArray.push(0);
+        let scoreArray = item.data.split(",")
+        let scoreData = scoreArray[scoreArray.length - 1]
+        //console.log(scoreData)
+        if (scoreData === "") {
+            scoreData = 0;
         }
 
         // Populate cells with data from JSON
         cell1.innerHTML = item.name;
-        const timestamp = new Date(item.time * 1000);
+        const timestamp = new Date(item.date * 1000);
         cell2.innerHTML = dateTimeFormat.format(timestamp);
-        cell3.innerHTML = scoreArray[scoreArray.length - 1];
+        cell3.innerHTML = scoreData;
     });
 }
 

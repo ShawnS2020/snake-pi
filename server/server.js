@@ -3,8 +3,9 @@ import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { Server } from "socket.io";
 import { createServer } from "http";
-import Papa from 'papaparse'
+import Papa from 'papaparse';
 import fs from "fs";
+import mysql from "mysql";
 
 const app = express();
 const httpServer = createServer(app);
@@ -12,6 +13,21 @@ const ioServer = new Server(httpServer);
 const __filename = fileURLToPath(import.meta.url);
 const __server = dirname(__filename);
 const __public = join(__server, "/public");
+const db = mysql.createConnection({
+  host: "34.41.216.29",
+  user: "root",
+  password: "jN@:f)ky\"Q?'cl?^",
+  database: "score", // comment out if running example 1
+});
+
+// Establish connection with the DB
+db.connect((err) => {
+  if (err) {
+    throw err;
+  } else {
+    console.log(`Successfuly connected to the DB!`);
+  }
+});
 // This variable is used to prevent more than 10 players from joining the game.
 let isGameRunning = false;
 // Create an array of colors to assign to players.
@@ -49,22 +65,35 @@ app.get('/players', (req, res) => {
 });
 
 app.get('/scorelist', (req, res) => {
-	fs.readFile('data.csv', 'utf8', (err, data) => {
-	if (err) {
-		console.error(err);
-		return;
-	}
-		Papa.parse(data, {
-			delimiter: "|",
-			header: true,
-			skipEmptyLines: true,
-			complete: function(results) {
-				//console.log(results);
-				let scorelist = results.data;
-				res.send(scorelist);
+	let sql_list =  'SELECT * FROM score_list';
+	let query = db.query(sql_list, function (err, result) {
+		if (err) {
+				throw err;
+			} else {
+				console.log(result)
+				res.send(result)
+				// Object.keys(result).forEach(function(key) {
+				// 	var row = result[key];
+				// 	console.log(row)
+				// });
 			}
 		});
-	});
+	// fs.readFile('data.csv', 'utf8', (err, data) => {
+	// 	if (err) {
+	// 		console.error(err);
+	// 		return;
+	// 	}
+	// 	Papa.parse(data, {
+	// 		delimiter: "|",
+	// 		header: true,
+	// 		skipEmptyLines: true,
+	// 		complete: function(results) {
+	// 			let scorelist = results.data;
+	// 			console.log(scorelist);
+	// 			res.send(scorelist);
+	// 		}
+	// 	});
+	// });
 });
 
 ioServer.on('connection', (socket) => {
@@ -134,10 +163,23 @@ ioServer.on('connection', (socket) => {
 		//let highScore = scoreGraph[scoreGraph.length - 1];
 		let playerName = players[i].name;
 		let currentTimestamp = Math.floor(new Date().getTime() / 1000);
-		fs.appendFileSync("data.csv", playerName + "|" + currentTimestamp + "|[" + scoreGraph + "]\n", "utf-8", (err) => {
-			if (err) console.log(err);
-			else console.log("Data saved");
-		});
+		//set up json for sql storage
+		let sql_data = { name: playerName, date: currentTimestamp, data: scoreGraph.toString() };
+		let sql_query = `INSERT INTO score_list SET ?`;
+		//code that inserts the data into the database using the query above
+		let query = db.query(sql_query, sql_data, (err, result) => {
+			if (err) {
+					throw err;
+				} else {
+					console.log("Data saved");
+				}
+			});
+		// old data storage implementation
+		// fs.appendFileSync("data.csv", playerName + "|" + currentTimestamp + "|[" + scoreGraph + "]\n", "utf-8", (err) => {
+		// 	if (err) console.log(err);
+		// 	else console.log("Data saved");
+		// });
+
 	});
 
 	// Emitted by the front end when the user clicks the start button.
